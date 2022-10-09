@@ -33,4 +33,7 @@ def version(codept: int) -> tuple:
 
     If there is no version assigned to the codepoint, ValueError will be raised
     """
+    if not isinstance(codept, int):
+        raise TypeError(f"Input must be the integer value of a single codepoint (got {type(codept)!r})")
+
     return _version(codept)
