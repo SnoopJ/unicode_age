@@ -3,7 +3,7 @@ name = "unicode_age"
 version = "15.0.0"
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "twine"]
 
 [build-system]
 requires = ["setuptools", "wheel", "Cython"]
