@@ -7,7 +7,7 @@ added to the standard
 
 ```python
 >>> import unicode_age
->>> codept = ord("\N{SNAKE}")
+>>> codept = ord("\N{SNAKE}")  # added in Unicode 6.0
 >>> print(unicode_age.version(codept))
 (6, 0)
 ```
