@@ -27,5 +27,10 @@ cdef _version(codept):
     raise ValueError("Not found")
 
 
-def version(codept):
+def version(codept: int) -> tuple:
+    """
+    Return a tuple `(major, minor)` indicating the Unicode version assigned to the given codepoint
+
+    If there is no version assigned to the codepoint, ValueError will be raised
+    """
     return _version(codept)
