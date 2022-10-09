@@ -2,6 +2,9 @@
 name = "unicode_age"
 version = "15.0.0"
 
+[project.optional-dependencies]
+dev = ["pytest"]
+
 [build-system]
 requires = ["setuptools", "wheel", "Cython"]
 build-backend = "setuptools.build_meta"
