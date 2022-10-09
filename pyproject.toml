@@ -1,6 +1,7 @@
 [project]
 name = "unicode_age"
 version = "15.0.0"
+readme = "README.md"
 
 [project.optional-dependencies]
 dev = ["pytest", "twine"]
