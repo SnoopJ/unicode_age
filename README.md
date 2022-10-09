@@ -12,6 +12,13 @@ added to the standard
 (6, 0)
 ```
 
+## Rationale
+
+Before writing this module, I was parsing `DerivedAge.txt` into a `list[int | None]`,
+but this approach consumes an atrocious amount of memory (10 MB) for
+what it is. Using the representation here consumes three orders of magnitude
+less memory (~30 KB), and it was kinda fun to write besides :)
+
 ## Updating
 
 The script `makeunicode_age.py` consumes
