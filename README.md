@@ -1,7 +1,6 @@
 # `unicode_age`
 
-A small extension module for determining what version a Unicode codepoint was
-added to the standard
+A package for determining what version a Unicode codepoint was added to the standard
 
 ## Example usage
 
