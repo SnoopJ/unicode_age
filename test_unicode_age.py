@@ -9,7 +9,7 @@ def test_version():
 
 def test_version_endofspan():
     # Regression test: at one point, the ends of version spans given in DerivedAge.txt weren't being handled correctly
-    assert unicode_age.version(ord("\N{DEAF PERSON}")) == (12, 0)
+    assert unicode_age.version(0x0903) == (1, 1)
 
 
 def test_version_badtype():
