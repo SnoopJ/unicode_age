@@ -1,5 +1,7 @@
 # `unicode_age`
 
+[![Build](https://github.com/SnoopJ/unicode_age/actions/workflows/build_wheels.yml/badge.svg?branch=main)](https://github.com/SnoopJ/unicode_age/actions/workflows/build_wheels.yml)
+
 A package for determining what version a Unicode codepoint was added to the standard
 
 ## Example usage
