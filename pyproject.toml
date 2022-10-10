@@ -12,3 +12,13 @@ dev = ["pytest", "twine", "cibuildwheel", "Cython"]
 [build-system]
 requires = ["setuptools", "wheel", "Cython"]
 build-backend = "setuptools.build_meta"
+
+[tool.tox]
+legacy_tox_ini = """
+[tox]
+envlist = py{37,38,39,310}, pypy{37,38,39}
+
+[testenv]
+deps = pytest
+commands = pytest
+"""
