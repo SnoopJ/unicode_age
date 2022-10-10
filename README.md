@@ -4,6 +4,9 @@
 
 A package for determining what version a Unicode codepoint was added to the standard
 
+This package's version `X.Y.Z` tracks Unicode version `X.Y`, with `Z` reserved as
+a release counter for updates unrelated to the Unicode version.
+
 ## Example usage
 
 ```python
