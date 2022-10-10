@@ -7,7 +7,7 @@ license = {text = "MIT"}
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["pytest", "twine", "cibuildwheel"]
+dev = ["pytest", "twine", "cibuildwheel", "Cython"]
 
 [build-system]
 requires = ["setuptools", "wheel", "Cython"]
