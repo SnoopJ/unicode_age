@@ -22,3 +22,7 @@ envlist = py{37,38,39,310}, pypy{37,38,39}
 deps = pytest
 commands = pytest
 """
+
+[tool.cibuildwheel]
+test-requires = "pytest"
+test-command = "pytest -v {project}/tests"
