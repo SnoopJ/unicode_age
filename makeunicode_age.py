@@ -29,7 +29,13 @@ def _write_spans(spans: list, c_out: Path, cython_out: Path):
     static const versionSpan_t versionSpans[] = {
     """)
 
-    c_src += "\t" + ",\n\t".join(spans) + "\n};"
+    c_src += "\t"
+
+    for (start, stop, major, minor) in spans:
+        line = f"{{0x{start:06x}, 0x{stop:06x}, {major}, {minor}}}"
+        c_src += f"{line},\n\t"
+
+    c_src += "\n};"
 
     pyx_src = CYTHON_TEMPLATE.substitute({"numSpans": len(spans)})
 
@@ -60,7 +66,7 @@ def _derivedage_spans():
 
                 major, minor = [int(part) for part in ver.split('.')]
 
-                yield f"{{0x{start:06x}, 0x{stop:06x}, {major}, {minor}}}"
+                yield start, stop, major, minor
 
 
 
