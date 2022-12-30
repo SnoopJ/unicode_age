@@ -7,7 +7,14 @@ license = {text = "MIT"}
 readme = "README.md"
 
 [project.optional-dependencies]
-dev = ["pytest", "twine", "cibuildwheel", "Cython", "build"]
+dev = [
+    "pytest",
+    "scriv[toml]",
+    "twine",
+    "cibuildwheel",
+    "Cython",
+    "build",
+]
 
 [build-system]
 requires = ["setuptools", "wheel", "Cython"]
@@ -26,3 +33,7 @@ commands = pytest
 [tool.cibuildwheel]
 test-requires = "pytest"
 test-command = "pytest -v {project}/tests"
+
+[tool.scriv]
+version = "literal: pyproject.toml: project.version"
+fragment_directory = "news"
