@@ -59,7 +59,7 @@ def _derivedage_spans():
                 start, stop, ver = m.groups()
                 start = int(start, base=16)
                 if stop:
-                    stop = int(stop, base=16) + 1
+                    stop = int(stop, base=16)
                     stop = min(stop, sys.maxunicode)
                 else:
                     stop = start

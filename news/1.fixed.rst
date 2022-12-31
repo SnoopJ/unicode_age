@@ -1,0 +1,4 @@
+Fixed
+-----
+
+- Correctly handle codepoints at the end of a span [#1](https://github.com/SnoopJ/unicode_age/issues/1)
