@@ -2,7 +2,7 @@
 name = "unicode_age"
 version = "16.0.0.0"
 description = "A package for determining what version a Unicode codepoint was added to the standard"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 license = {text = "MIT"}
 readme = "README.md"
 
@@ -23,7 +23,7 @@ build-backend = "setuptools.build_meta"
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py{37,38,39,310}, pypy{37,38,39}
+envlist = py{38,39,310}, pypy{38,39}
 
 [testenv]
 deps = pytest
