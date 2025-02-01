@@ -6,10 +6,10 @@ cdef extern from "unicode_age.h":
         char minor
 
     # Cython requires a hardcoded size here
-    versionSpan[1718] versionSpans
+    versionSpan[1768] versionSpans
 
 
-NUM_SPANS = 1718
+NUM_SPANS = 1768
 
 
 cdef _version(codept):
