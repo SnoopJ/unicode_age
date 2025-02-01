@@ -1,13 +1,7 @@
-from setuptools import Extension, setup
+from Cython.Build import cythonize
+from setuptools import setup
 
 
 setup(
-    ext_modules = [
-        Extension(
-            name="unicode_age",
-            sources=[
-                "src/unicode_age.pyx",
-            ],
-        ),
-    ]
+    ext_modules=cythonize("src/unicode_age.pyx"),
 )
