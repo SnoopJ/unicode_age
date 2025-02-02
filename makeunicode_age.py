@@ -1,8 +1,5 @@
 from __future__ import annotations
-import inspect
-import pprint
 import re
-import string
 import struct
 import sys
 from pathlib import Path
@@ -12,38 +9,8 @@ from textwrap import dedent
 HERE = Path(__file__).parent.resolve()
 DERIVEDAGES = HERE.joinpath("DerivedAge.txt")
 
-CYTHON_INFILE = HERE.joinpath("unicode_age.pyx.in")
-CYTHON_TEMPLATE = string.Template(CYTHON_INFILE.read_text())
 
-
-def _write_spans_c(spans: list, outfile: Path):
-    c_src = dedent("""
-    // 8 + 8 + 2 = 18 bytes per span
-    // 1283 'real' spans, 435 singleton spans as of Unicode 15.0
-    // ~31 KB of storage required (in practice the actual consumed memory is ~21 KB? not sure why that is...)
-    typedef struct {
-            int start;
-            int stop;
-            char major;
-            char minor;
-    } versionSpan_t;
-
-
-    static const versionSpan_t versionSpans[] = {
-    """)
-
-    c_src += "\t"
-
-    for (start, stop, major, minor) in spans:
-        line = f"{{0x{start:06x}, 0x{stop:06x}, {major}, {minor}}}"
-        c_src += f"{line},\n\t"
-
-    c_src += "\n};"
-
-    outfile.write_text(c_src)
-
-
-def _write_spans_py(spans: list, ucd_version: tuple[int], outfile: Path):
+def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     span_fmt = "iibb"
     VersionSpan = struct.Struct(span_fmt)
 
@@ -67,19 +34,9 @@ def _write_spans_py(spans: list, ucd_version: tuple[int], outfile: Path):
     VERSION_SPANS = {repr(buf)}
     """)
 
+
     outfile.write_text(py_src)
-
-
-def _write_spans(spans: list, ucd_version: tuple, c_out: Path, cython_out: Path, python_out: Path):
-    _write_spans_c(spans, c_out)
-    print(f"Wrote to {c_out}")
-
-    pyx_src = CYTHON_TEMPLATE.substitute({"numSpans": len(spans)})
-    cython_out.write_text(pyx_src)
-    print(f"Wrote to {cython_out}")
-
-    _write_spans_py(spans, ucd_version=ucd_version, outfile=python_out)
-    print(f"Wrote to {python_out}")
+    print(f"Wrote to {outfile}")
 
 
 def _derivedage_spans(fn):
@@ -121,16 +78,12 @@ def main():
     spans = list(_derivedage_spans(DERIVEDAGES))
 
     UNICODE_AGE = HERE.joinpath("src", "unicode_age")
-    C_OUTFILE = HERE.joinpath("src", "unicode_age.h")
-    CYTHON_OUTFILE = HERE.joinpath("src", "unicode_age.pyx")
     PYTHON_OUTFILE = UNICODE_AGE.joinpath("unicode_age_db.py")
 
     _write_spans(
         spans,
         ucd_version=ucd_version,
-        c_out=C_OUTFILE,
-        cython_out=CYTHON_OUTFILE,
-        python_out=PYTHON_OUTFILE,
+        outfile=PYTHON_OUTFILE,
     )
 
 
