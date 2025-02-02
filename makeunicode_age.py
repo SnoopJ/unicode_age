@@ -76,6 +76,7 @@ def main():
     ucd_version = parse_ucdversion(DERIVEDAGES)
     print(f"Scanning for version spans for UCD {ucd_version}: {str(DERIVEDAGES)}")
     spans = list(_derivedage_spans(DERIVEDAGES))
+    print(f"Found {len(spans)} versioned spans")
 
     UNICODE_AGE = HERE.joinpath("src", "unicode_age")
     PYTHON_OUTFILE = UNICODE_AGE.joinpath("unicode_age_db.py")
