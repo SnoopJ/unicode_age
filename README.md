@@ -25,8 +25,11 @@ less memory (~30 KB), and it was kinda fun to write besides :)
 
 ## Updating
 
-The script `makeunicode_age.py` consumes
-[`DerivedAge.txt`](https://www.unicode.org/reports/tr44/#DerivedAge.txt) and
-produces the `unicode_age_db.py` file that holds the backing data for this
-library. To make a build for another version of the Unicode Character Database,
-you should be able to replace `DerivedAge.txt` and re-run this script.
+The script `makeunicode_age.py` consumes [`DerivedAge.txt`] and produces the
+`unicode_age_db.py` file that holds the backing data for this library. To make
+a build for another version of the Unicode Character Database, you should be
+able to replace `DerivedAge.txt` with the [latest version] and re-run this
+script.
+
+[`DerivedAge.txt`]: https://www.unicode.org/reports/tr44/#DerivedAge.txt
+[latest version]: https://www.unicode.org/Public/UCD/latest/ucd/DerivedAge.txt
