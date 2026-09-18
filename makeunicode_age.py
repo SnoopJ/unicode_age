@@ -1,4 +1,5 @@
 from __future__ import annotations
+import binascii
 import re
 import struct
 import sys
@@ -29,11 +30,13 @@ def _write_spans(spans: list[Span], ucd_version: tuple[int, ...], outfile: Path)
         VersionSpan.pack_into(buf, n*VersionSpan.size, s.start, s.stop, s.major, s.minor)
 
     zbuf = zlib.compress(buf, 9)
+    b64buf = binascii.b2a_base64(zbuf, newline=False)
 
     py_src = dedent(f"""
     from __future__ import annotations
     import struct
     import zlib
+    import binascii
 
     UCD_VERSION = {ucd_version}
 
@@ -42,7 +45,7 @@ def _write_spans(spans: list[Span], ucd_version: tuple[int, ...], outfile: Path)
     def iter_spans():
         yield from VersionSpan.iter_unpack(VERSION_SPANS)
 
-    VERSION_SPANS = zlib.decompress({repr(zbuf)})
+    VERSION_SPANS = zlib.decompress(binascii.a2b_base64({repr(b64buf)}))
     """)
 
 
