@@ -2,16 +2,23 @@ from __future__ import annotations
 import re
 import struct
 import sys
+import typing
 import zlib
 from pathlib import Path
 from textwrap import dedent
-
+from dataclasses import dataclass
 
 HERE = Path(__file__).parent.resolve()
 DERIVEDAGES = HERE.joinpath("DerivedAge.txt")
 
+@dataclass
+class Span:
+    start: int
+    stop: int
+    major: int
+    minor: int
 
-def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
+def _write_spans(spans: list[Span], ucd_version: tuple[int, ...], outfile: Path):
     span_fmt = "iibb"
     VersionSpan = struct.Struct(span_fmt)
 
@@ -19,7 +26,7 @@ def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     buf = bytearray(Nbytes)
 
     for n, s in enumerate(spans):
-        VersionSpan.pack_into(buf, n*VersionSpan.size, *s)
+        VersionSpan.pack_into(buf, n*VersionSpan.size, s.start, s.stop, s.major, s.minor)
 
     zbuf = zlib.compress(buf, 9)
 
@@ -43,7 +50,7 @@ def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     print(f"Wrote to {outfile}")
 
 
-def _derivedage_spans(fn):
+def _derivedage_spans(fn: Path) -> typing.Generator[Span]:
     CODEPT = r"[0-9A-Fa-f]+"
     PATT = rf"^({CODEPT})(?:\.\.({CODEPT}))?\s*;\s*([\d.]+)\s*#.*"
 
@@ -62,7 +69,7 @@ def _derivedage_spans(fn):
 
                 major, minor = [int(part) for part in ver.split('.')]
 
-                yield start, stop, major, minor
+                yield Span(start, stop, major, minor)
 
 
 def parse_ucdversion(fn: Path) -> tuple[int, ...]:
