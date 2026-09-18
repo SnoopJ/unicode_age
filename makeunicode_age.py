@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 import struct
 import sys
+import zlib
 from pathlib import Path
 from textwrap import dedent
 
@@ -20,9 +21,12 @@ def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     for n, s in enumerate(spans):
         VersionSpan.pack_into(buf, n*VersionSpan.size, *s)
 
+    zbuf = zlib.compress(buf, 9)
+
     py_src = dedent(f"""
     from __future__ import annotations
     import struct
+    import zlib
 
     UCD_VERSION = {ucd_version}
 
@@ -31,7 +35,7 @@ def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     def iter_spans():
         yield from VersionSpan.iter_unpack(VERSION_SPANS)
 
-    VERSION_SPANS = {repr(buf)}
+    VERSION_SPANS = zlib.decompress({repr(zbuf)})
     """)
 
 
