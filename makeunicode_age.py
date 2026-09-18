@@ -57,7 +57,7 @@ def _write_spans(spans: list[Span], ucd_version: tuple[int, ...], outfile: Path)
     print(f"Wrote to {outfile}")
 
 
-def _merge_spans(spans: typing.Generator[Span]) -> typing.Generator[Span]:
+def _merge_spans(spans: typing.Iterator[Span]) -> typing.Generator[Span]:
     last = next(spans) 
     merged = 0
     for span in spans:
@@ -106,7 +106,9 @@ def parse_ucdversion(fn: Path) -> tuple[int, ...]:
 def main():
     ucd_version = parse_ucdversion(DERIVEDAGES)
     print(f"Scanning for version spans for UCD {ucd_version}: {str(DERIVEDAGES)}")
-    spans = list(_merge_spans(_derivedage_spans(DERIVEDAGES)))
+    spans = _derivedage_spans(DERIVEDAGES)
+    spans = sorted(spans, key=lambda x: x.start)
+    spans = list(_merge_spans(iter(spans)))
     print(f"Found {len(spans)} versioned spans")
 
     UNICODE_AGE = HERE.joinpath("src", "unicode_age")
