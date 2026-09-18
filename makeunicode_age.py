@@ -1,16 +1,25 @@
 from __future__ import annotations
+import binascii
 import re
 import struct
 import sys
+import typing
+import zlib
 from pathlib import Path
 from textwrap import dedent
-
+from dataclasses import dataclass
 
 HERE = Path(__file__).parent.resolve()
 DERIVEDAGES = HERE.joinpath("DerivedAge.txt")
 
+@dataclass
+class Span:
+    start: int
+    stop: int
+    major: int
+    minor: int
 
-def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
+def _write_spans(spans: list[Span], ucd_version: tuple[int, ...], outfile: Path):
     span_fmt = "iibb"
     VersionSpan = struct.Struct(span_fmt)
 
@@ -18,11 +27,18 @@ def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     buf = bytearray(Nbytes)
 
     for n, s in enumerate(spans):
-        VersionSpan.pack_into(buf, n*VersionSpan.size, *s)
+        VersionSpan.pack_into(buf, n*VersionSpan.size, s.start, s.stop, s.major, s.minor)
 
-    py_src = dedent(f"""
+    zbuf = zlib.compress(buf, 9)
+    b64buf = binascii.b2a_base64(zbuf, newline=False)
+    n = 64
+    b64rows = "\n".join(repr(b64buf[i:i+n]) for i in range(0, len(b64buf), n))
+
+    py_src = dedent("""
     from __future__ import annotations
     import struct
+    import zlib
+    import binascii
 
     UCD_VERSION = {ucd_version}
 
@@ -31,15 +47,30 @@ def _write_spans(spans: list, ucd_version: tuple, outfile: Path):
     def iter_spans():
         yield from VersionSpan.iter_unpack(VERSION_SPANS)
 
-    VERSION_SPANS = {repr(buf)}
-    """)
+    VERSION_SPANS = zlib.decompress(binascii.a2b_base64(
+    {b64rows}
+    ))
+    """).format(ucd_version=ucd_version, span_fmt=span_fmt, b64rows=b64rows)
 
 
     outfile.write_text(py_src)
     print(f"Wrote to {outfile}")
 
 
-def _derivedage_spans(fn):
+def _merge_spans(spans: typing.Iterator[Span]) -> typing.Generator[Span]:
+    last = next(spans) 
+    merged = 0
+    for span in spans:
+        if span.major == last.major and span.minor == last.minor and span.start == last.stop + 1:
+            last.stop = span.stop
+            merged = merged + 1
+        else:
+            yield last
+            last = span
+    print(f"Merged {merged} spans")
+    yield last
+
+def _derivedage_spans(fn: Path) -> typing.Generator[Span]:
     CODEPT = r"[0-9A-Fa-f]+"
     PATT = rf"^({CODEPT})(?:\.\.({CODEPT}))?\s*;\s*([\d.]+)\s*#.*"
 
@@ -58,10 +89,10 @@ def _derivedage_spans(fn):
 
                 major, minor = [int(part) for part in ver.split('.')]
 
-                yield start, stop, major, minor
+                yield Span(start, stop, major, minor)
 
 
-def parse_ucdversion(fn: Path) -> tuple[int, int, int]:
+def parse_ucdversion(fn: Path) -> tuple[int, ...]:
     with open(fn, "r") as f:
         patt = r"DerivedAge-(?P<version>\d+\.\d+\.\d+)\.txt"
         m = re.search(patt, f.readline())
@@ -75,7 +106,9 @@ def parse_ucdversion(fn: Path) -> tuple[int, int, int]:
 def main():
     ucd_version = parse_ucdversion(DERIVEDAGES)
     print(f"Scanning for version spans for UCD {ucd_version}: {str(DERIVEDAGES)}")
-    spans = list(_derivedage_spans(DERIVEDAGES))
+    spans = _derivedage_spans(DERIVEDAGES)
+    spans = sorted(spans, key=lambda x: x.start)
+    spans = list(_merge_spans(iter(spans)))
     print(f"Found {len(spans)} versioned spans")
 
     UNICODE_AGE = HERE.joinpath("src", "unicode_age")
