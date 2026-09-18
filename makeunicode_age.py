@@ -65,7 +65,7 @@ def _derivedage_spans(fn):
                 yield start, stop, major, minor
 
 
-def parse_ucdversion(fn: Path) -> tuple[int, int, int]:
+def parse_ucdversion(fn: Path) -> tuple[int, ...]:
     with open(fn, "r") as f:
         patt = r"DerivedAge-(?P<version>\d+\.\d+\.\d+)\.txt"
         m = re.search(patt, f.readline())
