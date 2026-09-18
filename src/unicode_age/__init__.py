@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Tuple
 
-from .unicode_age_db import iter_spans
+from .unicode_age_db import iter_spans, UCD_VERSION
 
+UCD_VERSION_STR = ".".join(str(it) for it in UCD_VERSION)
 
 UCDVersion = Tuple[int, int]
 
@@ -14,4 +15,4 @@ def version(codept: int) -> UCDVersion | None:
             return (major, minor)
 
     # linear scan failed
-    raise ValueError("Codepoint U+{codept:x} was not allocated as of UCD {UCD_VERSION}")
+    raise ValueError(f"Codepoint U+{codept:x} was not allocated as of UCD {UCD_VERSION_STR}")
