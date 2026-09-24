@@ -68,8 +68,12 @@ def parse_ucdversion(fn: Path) -> tuple[int, int, int]:
         if not m:
             raise ValueError("Cannot determine UCD version of {str(fn)!r}")
 
-    ver = tuple(int(val) for val in m.group("version").split('.'))
-    return ver
+    # NOTE:2026-09-23:Here we are implicitly asserting that there are exactly 3,
+    # in line with the Version Numbering specified by the Consortium:
+    # https://www.unicode.org/versions/#Version_Numbering
+    major, minor, patch = (int(val) for val in m.group("version").split('.'))
+
+    return major, minor, patch
 
 
 def main():
